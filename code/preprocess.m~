@@ -1,9 +1,10 @@
-cd ~/Documents/modeling/sparse-coding/TIMIT
 
-[ts1 sr1] = readnist('timit/SA1');
-[ts2 sr2] = readnist('timit/SI1027.WAV');
-[ts3 sr3] = readnist('timit/SI1657.WAV');
-[ts4 sr4] = readnist('timit/SI648.WAV');
+clippref = '/Users/dfklein/Documents/modeling/sparse-coding/clips/';
+
+[ts1 sr1] = readnist([clippref 'SA1.WAV']);
+[ts2 sr2] = readnist([clippref 'SI1027.WAV']);
+[ts3 sr3] = readnist([clippref 'SI1657.WAV']);
+[ts4 sr4] = readnist([clippref 'SI648.WAV']);
 
 %%
 x1 = unitseq(ts1);
@@ -12,6 +13,7 @@ x3 = unitseq(ts3);
 x4 = unitseq(ts4);
 
 %%
+loadload;
 paras = [8 8 -.1 0];
 y1 = wav2aud(x1, paras);
 aud_plot(y1, paras);
@@ -47,3 +49,19 @@ subplot(2,4,5); aud_plot(y1, paras);
 subplot(2,4,6); aud_plot(y2, paras);
 subplot(2,4,7); aud_plot(y3, paras);
 subplot(2,4,8); aud_plot(y4, paras);
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ACTUAL PREPROCESSING STUFF                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+loadload;
+
+filenames = textread([clippref 'all_TIMIT_WAVs.txt'], '%s');
+rand_files = filenames(randperm(length(filenames)));
+
+numfiles = 10;   % start small, this maybe should be more like 50
+filestruct
+for fn = rand_files(1:numfiles)
+    fprintf('Processing %s', fn);
+    aud = timit2aud(fn);
+    
