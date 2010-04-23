@@ -6,25 +6,38 @@ loadload;
 filenames = textread([sparse_coding_dir() 'clips/all_TIMIT_WAVs.txt'], '%s');
 rand_files = filenames(randperm(length(filenames)));
 
-numfiles = 4;   % start small, this maybe should be more like 50
+numfiles = 50;   % start small, this maybe should be more like 50
 
 % initialize the struct for the processed files
 filestruct = struct('filename', {}, 'waveform', {}, ...
     'aud', {}, 'whitened', {});
+imvars = zeros(numfiles, 1);
 for n = 1:numfiles
     fn = rand_files{n};
-    fprintf('Processing %s\n', fn);
-    fprintf('  -> generating cochleagram...')
+    fprintf('Processing file number %d\n', n)
+    fprintf('  name: %s\n', fn);
+    fprintf('  generating cochleagram...')
     [aud, wav] = timit2aud(fn);
     fprintf('done (%d by %d)\n', size(aud));
     filestruct(n).filename = fn;
     filestruct(n).aud = aud;
     filestruct(n).waveform = wav;
-    fprintf('  -> spatially whitening...');
-    filestruct(n).whitened = whiten_image(aud);
+    fprintf('  spatially whitening...');
+    white = whiten_image(aud);
+    filestruct(n).whitened = white;
+    imvars(n) = var(white(:));
     fprintf('done\n')
 end
 
-save([sparse_coding_dir() 'clips/whitened_auds.mat'], 'filestruct');
+%% adjust so that the mean variance is 0.1
+fprintf('  Adjusting variance to have mean of 0.1');
+var_adjustment = sqrt(0.1/mean(imvars));
+for n = 1:numfiles
+    filestruct(n).whitened = filestruct(n).whitened * var_adjustment;
+    imvars(n) = var(filestruct(n).whitened(:));
+end
+fprintf(' (actual mean: %g)', mean(imvars));
 
-n = ceil(
+
+
+save([sparse_coding_dir() 'clips/whitened_auds.mat'], 'filestruct');

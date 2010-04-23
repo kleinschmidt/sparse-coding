@@ -2,12 +2,14 @@
 % 
 % Before running you must first define A and load IMAGES.
 % See the README file for further instructions.
+%
+% Dave Kleinschmidt 4/2010:
+%   modified to take a cell array of non-square images
 
 num_trials=10000;
 batch_size=100;
 
-num_images=size(IMAGES,3);
-image_size=size(IMAGES,1);
+num_images=length(IMAGES);
 BUFF=4;
 
 [L M]=size(A);
@@ -38,13 +40,14 @@ for t=1:num_trials
     % choose an image for this batch
     
     i=ceil(num_images*rand);
-    this_image=IMAGES(:,:,i);
+    this_image=IMAGES{i};
+    im_size = size(this_image);
     
     % extract subimages at random from this image to make data vector X
     
     for i=1:batch_size
-        r=BUFF+ceil((image_size-sz-2*BUFF)*rand);
-        c=BUFF+ceil((image_size-sz-2*BUFF)*rand);
+        r=BUFF+ceil((im_size(1)-sz-2*BUFF)*rand);
+        c=BUFF+ceil((im_size(2)-sz-2*BUFF)*rand);
         X(:,i)=reshape(this_image(r:r+sz-1,c:c+sz-1),L,1);
     end
     

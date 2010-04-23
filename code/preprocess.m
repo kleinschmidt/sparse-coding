@@ -11,6 +11,7 @@ numfiles = 50;   % start small, this maybe should be more like 50
 % initialize the struct for the processed files
 filestruct = struct('filename', {}, 'waveform', {}, ...
     'aud', {}, 'whitened', {});
+imvars = zeros(numfiles, 1);
 for n = 1:numfiles
     fn = rand_files{n};
     fprintf('Processing file number %d\n', n)
@@ -22,8 +23,21 @@ for n = 1:numfiles
     filestruct(n).aud = aud;
     filestruct(n).waveform = wav;
     fprintf('  spatially whitening...');
-    filestruct(n).whitened = whiten_image(aud);
+    white = whiten_image(aud);
+    filestruct(n).whitened = white;
+    imvars(n) = var(white(:));
     fprintf('done\n')
 end
+
+% adjust so that the mean variance is 0.1
+fprintf('  Adjusting variance to have mean of 0.1');
+var_adjustment = sqrt(0.1/mean(imvars));
+for n = 1:numfiles
+    filestruct(n).whitened = filestruct(n).whitened * var_adjustment;
+    imvars(n) = var(filestruct(n).whitened(:));
+end
+fprintf(' (actual mean: %g)', mean(imvars));
+
+
 
 save([sparse_coding_dir() 'clips/whitened_auds.mat'], 'filestruct');
