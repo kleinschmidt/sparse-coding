@@ -1,4 +1,4 @@
-function aud = timit2aud(filename)
+function [aud, x] = timit2aud(fn)
 
 params = [8, 8, .1, 0];
 
