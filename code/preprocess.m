@@ -6,21 +6,22 @@ loadload;
 filenames = textread([sparse_coding_dir() 'clips/all_TIMIT_WAVs.txt'], '%s');
 rand_files = filenames(randperm(length(filenames)));
 
-numfiles = 4;   % start small, this maybe should be more like 50
+numfiles = 50;   % start small, this maybe should be more like 50
 
 % initialize the struct for the processed files
 filestruct = struct('filename', {}, 'waveform', {}, ...
     'aud', {}, 'whitened', {});
 for n = 1:numfiles
     fn = rand_files{n};
-    fprintf('Processing %s\n', fn);
-    fprintf('  -> generating cochleagram...')
+    fprintf('Processing file number %d\n', n)
+    fprintf('  name: %s\n', fn);
+    fprintf('  generating cochleagram...')
     [aud, wav] = timit2aud(fn);
     fprintf('done (%d by %d)\n', size(aud));
     filestruct(n).filename = fn;
     filestruct(n).aud = aud;
     filestruct(n).waveform = wav;
-    fprintf('  -> spatially whitening...');
+    fprintf('  spatially whitening...');
     filestruct(n).whitened = whiten_image(aud);
     fprintf('done\n')
 end
