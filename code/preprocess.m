@@ -49,3 +49,19 @@ subplot(2,4,5); aud_plot(y1, paras);
 subplot(2,4,6); aud_plot(y2, paras);
 subplot(2,4,7); aud_plot(y3, paras);
 subplot(2,4,8); aud_plot(y4, paras);
+
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ACTUAL PREPROCESSING STUFF                                          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+loadload;
+
+filenames = textread([clippref 'all_TIMIT_WAVs.txt'], '%s');
+rand_files = filenames(randperm(length(filenames)));
+
+numfiles = 10;   % start small, this maybe should be more like 50
+filestruct
+for fn = rand_files(1:numfiles)
+    fprintf('Processing %s', fn);
+    aud = timit2aud(fn);
+    

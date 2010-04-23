@@ -1,6 +1,8 @@
 1) select subset of TIMIT files
+   how many?
+    10 (512x512 pixel) images in Olshausen 1997
+   so maybe 2-4 times as many?  
 2) convert to wav
-2a) some sort of further filtering?? talk to stephen david
 3) create cochleagrams
 4) whiten cochleagrams
 5) sparse coding...
