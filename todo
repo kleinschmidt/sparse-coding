@@ -1,0 +1,6 @@
+1) select subset of TIMIT files
+2) convert to wav
+2a) some sort of further filtering?? talk to stephen david
+3) create cochleagrams
+4) whiten cochleagrams
+5) sparse coding...
