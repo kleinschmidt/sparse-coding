@@ -16,8 +16,8 @@ for n = 1:length(filestruct)
 end
 
 %% create A, the matrix of basis functions
-basis_size = 8;    % start small
-num_bases = 64;
+basis_size = 16;    % start small
+num_bases = 192;
 fprintf('  Generating %d (%d-by-%d) basis functions A\n', ...
     num_bases, basis_size, basis_size)
 A = rand(basis_size^2, num_bases) - 0.5;
