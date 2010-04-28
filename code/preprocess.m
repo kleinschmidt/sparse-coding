@@ -8,12 +8,18 @@ rand_files = filenames(randperm(length(filenames)));
 
 numfiles = 50;   % start small, this maybe should be more like 50
 
-% initialize the struct for the processed files
-filestruct = struct('filename', {}, 'waveform', {}, ...
-    'aud', {}, 'whitened', {});
+if ~exist('filestruct')
+    % initialize the struct for the processed files
+    filestruct = struct('filename', {}, 'waveform', {}, ...
+        'aud', {}, 'whitened', {});
+end
 imvars = zeros(numfiles, 1);
 for n = 1:numfiles
-    fn = rand_files{n};
+    if exist('filestruct')
+        fn = filestruct(n).filename;
+    else
+        fn = rand_files{n};
+    end
     fprintf('Processing file number %d\n', n)
     fprintf('  name: %s\n', fn);
     fprintf('  generating cochleagram...')
@@ -40,4 +46,4 @@ fprintf(' (actual mean: %g)', mean(imvars));
 
 
 
-save([sparse_coding_dir() 'clips/whitened_auds.mat'], 'filestruct');
+save([sparse_coding_dir() 'clips/whitened_auds_big.mat'], 'filestruct');
