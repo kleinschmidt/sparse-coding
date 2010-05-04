@@ -1,4 +1,4 @@
-function [patches, nr, nc] = make_patches(X, sz)
+function [patches, nr, nc] = make_patches(X, sz, padding)
 % make_patches(X,sz): break a matrix up into square patches
 %
 % output is a sz^2-by-n matrix
@@ -8,8 +8,13 @@ nr = floor(rs/sz);
 nc = floor(cs/sz);
 n = nr*nc;
 
-rpad = floor(mod(rs,sz)/2);
-cpad = floor(mod(cs,sz)/2);
+if nargin<3
+    rpad = floor(mod(rs,sz)/2);
+    cpad = floor(mod(cs,sz)/2);
+else
+    rpad = padding(1);
+    cpad = padding(2);
+end
 
 patches = zeros(sz^2, n);
 i = 1;
