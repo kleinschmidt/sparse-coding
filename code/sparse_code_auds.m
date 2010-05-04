@@ -4,7 +4,7 @@
 fprintf('SPARSE_CODE_AUDS -- running the sparse coding model in TIMIT AUDS\n');
 
 % this loads the struct array filestruct
-load([sparse_coding_dir() '/clips/whitened_auds.mat']);
+%load([sparse_coding_dir() '/clips/whitened_auds_r.mat']);
 
 %% create the IMAGES array required by sparsenet.m
 fprintf('  Generating IMAGES:\n');
@@ -16,8 +16,8 @@ for n = 1:length(filestruct)
 end
 
 %% create A, the matrix of basis functions
-basis_size = 16;    % start small
-num_bases = 192;
+basis_size = 16;
+num_bases = 256;
 fprintf('  Generating %d (%d-by-%d) basis functions A\n', ...
     num_bases, basis_size, basis_size)
 A = rand(basis_size^2, num_bases) - 0.5;

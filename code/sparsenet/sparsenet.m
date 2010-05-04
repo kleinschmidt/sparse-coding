@@ -32,7 +32,7 @@ X=zeros(L,batch_size);
 display_every=10;
 
 h=display_network(A,S_var);
-
+allAs = zeros(size(A));
 % main loop
 
 for t=1:num_trials
@@ -84,6 +84,11 @@ for t=1:num_trials
     
     if (mod(t,display_every)==0)
         display_network(A,S_var,h);
+        allAs = cat(3,allAs,A);
+        if exist('outfn')
+            save(outfn, 'allAs');
+        end
     end
+    %fprintf('  mean sqared dA = %f\n', sqrt(mean(dA(:).^2)/mean(A(:).^2)));
     
 end

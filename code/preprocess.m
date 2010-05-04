@@ -29,7 +29,9 @@ for n = 1:numfiles
     filestruct(n).aud = aud;
     filestruct(n).waveform = wav;
     fprintf('  spatially whitening...');
-    white = whiten_image(aud);
+    % just rescale to [0 1] for now
+    %white = whiten_image(aud);
+    white = (aud-min(aud(:))) / range(aud(:));
     filestruct(n).whitened = white;
     imvars(n) = var(white(:));
     fprintf('done\n')
@@ -46,4 +48,4 @@ fprintf(' (actual mean: %g)', mean(imvars));
 
 
 
-save([sparse_coding_dir() 'clips/whitened_auds_big.mat'], 'filestruct');
+save([sparse_coding_dir() 'clips/whitened_auds_rescaled_only.mat'], 'filestruct');

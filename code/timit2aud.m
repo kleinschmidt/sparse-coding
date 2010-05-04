@@ -1,6 +1,6 @@
 function [aud, x] = timit2aud(fn)
 
-params = [4 8 .1 0];
+params = [8 8 .1 0];
 
 [x samprate] = readnist(fn);
 x = unitseq(x);
