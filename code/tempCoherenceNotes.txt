@@ -1,0 +1,31 @@
+Implementing the temporal coherence-maximizing algorithm of Hurri and Hyvarinen (2003).
+
+Algorithm is strightforward: gradient-asecent-ish.
+Need to nail down data representation first.
+
+Input:
+	Z - whitened observations (T-by-dim-by-2, T pairs of vectorized frames, separated by delta-t)
+	eps - gradient ascent tolerance
+	alpha - step sizes to try
+
+Output:
+	U - matrix of (whitened) basis functions. (K-by-dim)
+
+
+
+How to calculate the gradient:
+One row at a time:
+    for each row k:
+    	for each time t:
+	    ykt = U(k,:) * Z(t,:,1)'
+	    ykdt = U(k,:) * Z(t,:,2)'
+	    total += gprime(ykt)*g(ykdt)*Z(t,:,1) + g(ykt)*gprime(ykdt)*Z(t,:,2)
+	dU(k,:) = total/T;
+
+
+OR
+    for each row k:
+    	ykt = U(k,:) * Z(:,:,1)'    % row of y_k(t)'s for all t
+	ykdt = U(k,:) * Z(:,:,2)'   % row of y_k(t-dt)'s
+	% sum over rows
+	dU(k,:) = sum( gp(ykt).*g(ykdt)*Z(:,:,1) + g(ykt).*gp(ykdt)*Z(:,:,2), 1);
