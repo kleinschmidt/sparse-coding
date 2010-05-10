@@ -11,7 +11,7 @@ uniqlabs = unique(labels);
 fprintf('\n\n    ');
 
 for i=1:npts
-    fprintf('\b\b\b\b%4d', i);
+    %fprintf('\b\b\b\b%4d', i);
     %if mod(i,100)==0, fprintf('.'); end
     testinds = [1:i-1, i+1:npts];
     [vote uniqnn counts] = knn(pts(i,1:ndim), pts(testinds, 1:ndim), labels(testinds), k);

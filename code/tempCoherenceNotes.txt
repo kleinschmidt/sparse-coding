@@ -29,3 +29,9 @@ OR
 	ykdt = U(k,:) * Z(:,:,2)'   % row of y_k(t-dt)'s
 	% sum over rows
 	dU(k,:) = sum( gp(ykt).*g(ykdt)*Z(:,:,1) + g(ykt).*gp(ykdt)*Z(:,:,2), 1);
+
+OR
+    in one fell swoop:
+        yt = U * Z(:,:,1)';
+	ydt = U * Z(:,:,2)';
+	dU = (gp(yt).*g(ydt)) * Z(:,:,1)' + (g(yt).*gp(ydt)) * Z(:,:,2)';
