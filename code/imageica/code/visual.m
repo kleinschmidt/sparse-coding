@@ -1,4 +1,4 @@
-function visual( A, mag, cols )
+function I = visual( A, mag, cols )
 % visual - display a basis for image patches
 %
 % A        the basis, with patches as column vectors
@@ -24,7 +24,6 @@ I = maxi*ones(dim*rows+rows-1,dim*cols+cols-1);
 
 for i=0:rows-1
   for j=0:cols-1
-    
     % This sets the patch
     I(i*dimp+1:i*dimp+dim,j*dimp+1:j*dimp+dim) = ...
 			reshape(A(:,i*cols+j+1),[dim dim]);
