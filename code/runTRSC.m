@@ -52,7 +52,7 @@ Cx = cov([X Xlag]');
 % eigenvalue decomposition:
 [E,D] = eig(Cx);
 
-% dimension reduction
+% dimension reduction and decorrelation (whitening)
 ndim = 256;
 %%
 [dummy,order] = sort(diag(-D));
@@ -67,6 +67,10 @@ dewhiten = E*D^(-1);
 Z = whiten*X;
 Zlag = whiten*Xlag;
 
+% TO CONVERT WHITENED BASIS FUNCTIONS TO UNWHITENED:
+% W = U*whiten;
+% (since y = U*Z = U*whiten*X = W*X)
+
 
 %% Run the model:
 
@@ -77,9 +81,8 @@ p = struct(...
     'outfn', [sparse_coding_dir 'output/trsc_' date() '.csv'], ...
     'maxIter', 1000, ...
     'displayEvery', 1, ...
-    'plotfcn', @(W) display_trsc(W,dewhiten), ...
-    'updateAlphaEvery', 5, ...
-    );
+    'plotfcn', @(W) display_trsc(W,whiten), ...
+    'updateAlphaEvery', 5);
 
-fprintf('starting temporal coherence model\nwriting output to %s\n', outfn);
-U = maxTRSC(eps, alpha, maxIter, outfn);
+fprintf('starting temporal coherence model\nwriting output to %s\n', p.outfn);
+maxTRSC(p);

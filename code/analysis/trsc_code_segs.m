@@ -1,67 +1,59 @@
-function [projected nr nc sz numbasis] = code_segs(segs, basis, outfn)
-% function projected = code_segs(segs, basis[, outfn])
+function [proj nr nc sz numbases] = code_segs(segs, W, sz, outfn)
+% function projected = code_segs(segs, W, sz[, outfn])
 %
 % Codes the segments in segs by breaking them into patches and projecting
 % those patches into the basis-space described by basis.
-%
-% basis must be a struct with the following fields:
-%
-% U - whitened basis functions
-% W - unwhitened basis functions
-% whiten - PCA whitening matrix
-% dewhiten - PCA dewhitening matrix
-% sz - actual spectro-temporal size of one basis function
+
 
 fprintf('Coding segments into TRSC basis space.\n');
 
 numsegs = length(segs);
-[sz numbasis] = size(A);
-sz = sqrt(sz);
-[p nr nc] = make_patches(segs(1).wht, sz);
-% put all the row- (time-) padding at the front to cut off lead-in
-padding = [mod(size(segs(1).wht,1),nr), 0];
+[numbases dummy] = size(W);
+[ps nr nc] = strobe_patches(segs(1).aud, sz);
+proj = zeros(nr*nc*numbases, numsegs);
 
-fprintf('  using %d*%d=%d patches (%d-by-%d) for %d segments\n', ...
-    nr, nc, nr*nc, sz, sz, numsegs);
+fprintf('  input size: %d %d-by-%d patches for each of %d segments\n', ...
+    nr*nc, sz, numsegs);
+fprintf('  output size: %d-by-%d matrix of projections into basis space\n', ...
+    size(proj));
 
-projected = zeros(numsegs, nr*nc*numbasis);
+fprintf('  processing segment no.%4d', 0);
 
-
-digits = length(num2str(numsegs));
-fprintf(['  processing segment ' repmat(' ', [1 2*digits+7])]);
-str = [repmat('\b', [1, 2*digits+7]) ...
-       '%' num2str(digits) 'd of ' num2str(numsegs) '...'];
 for i=1:numsegs
-    fprintf(str, i);
-    seg = segs(i);
-    ps = make_patches(seg.wht, sz, padding);
-    proj = A'*ps;
-    projected(i,:) = proj(:)';
+    fprintf('\b\b\b\b%4d (strobing)', i);
+    [ps nr nc] = strobe_patches(segs(i).aud, sz);
+    % subtract local mean and normalize to have unit norm
+    fprintf([repmat('\b', size(' (strobing)')), ' (normalizing)']);
+    ps = ps - ones(size(ps,1),1)*mean(ps);
+    ps = ps ./ (ones(size(ps,1),1)*sqrt(sum(ps.^2)));
+    fprintf([repmat('\b', size(' (normalizing)'))]);
+    % convolve with basis functions
+    y = W*ps;
+    proj(:,i) = y(:);
 end
-fprintf('done\n');
 
-% print output to file if a name is specified
-if nargin > 2
-    fid = fopen(outfn, 'w');
-    fprintf('  writing output to file %s\n', outfn);
-    % print header
-    fprintf(fid, 'phn');
-    for c=1:nc
-        for r=1:nr
-            for a=1:numbasis
-                fprintf(fid, ',a%d-t%d-f%d', a, r, c);
-            end
-        end
-    end
-    fprintf(fid, '\n');
-    
-    lineformat = ['%s', repmat(',%g', [1,nr*nc*numbasis]), '\n'];
-    fprintf(['   line ' repmat(' ', [1 2*digits+7])]);
-    for i=1:size(projected, 1)
-        fprintf(str, i);
-        fprintf(fid, lineformat, segs(i).phn, projected(i,:));
-    end
-    fprintf('done\n');
-    
-    fclose(fid);
-end
+% % print output to file if a name is specified
+% if nargin > 3
+%     fid = fopen(outfn, 'w');
+%     fprintf('  writing output to file %s\n', outfn);
+%     % print header
+%     fprintf(fid, 'phn');
+%     for c=1:nc
+%         for r=1:nr
+%             for a=1:numbasis
+%                 fprintf(fid, ',a%d-t%d-f%d', a, r, c);
+%             end
+%         end
+%     end
+%     fprintf(fid, '\n');
+%     
+%     lineformat = ['%s', repmat(',%g', [1,nr*nc*numbasis]), '\n'];
+%     fprintf(['   line ' repmat(' ', [1 2*digits+7])]);
+%     for i=1:size(projected, 1)
+%         fprintf(str, i);
+%         fprintf(fid, lineformat, segs(i).phn, projected(i,:));
+%     end
+%     fprintf('done\n');
+%     
+%     fclose(fid);
+% end

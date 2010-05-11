@@ -1,9 +1,9 @@
-function display_trsc(U,dewhiten)
+function display_trsc(U,whiten)
 
 % U is 255-by-256 (num by dim)
 % dewhtU is 2048-by-255 (dim-by-num)
 % (dewhitened) basis functions are 16-by-128
-dewhtU = dewhiten*U';
+dewhtU = U*whiten;
 minu = -1;%min(dewhtU(:));
 maxu = 1;%max(dewhtU(:));
 
@@ -21,8 +21,8 @@ i=0;
 for r=1:rs
     for c=1:cs
         i=i+1;
-        if i > size(dewhtU,2), continue, end
-        bf = reshape(dewhtU(:,i), bfcs,bfrs);
+        if i > size(dewhtU,1), continue, end
+        bf = reshape(dewhtU(i,:), bfcs,bfrs);
         bfs( (1:bfrs)+(r-1)*(bfrs+1), (1:bfcs)+(c-1)*(bfcs+1) ) = ...
             bf(:,end:-1:1)'/max(abs(bf(:)));
     end

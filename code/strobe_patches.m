@@ -11,8 +11,8 @@ wcs = window(2);
 
 if nargin < 3, stepsize = 1; end
 
-rows = 1:stepsize:rs-wrs+1;
-cols = 1:stepsize:cs-wcs+1;
+rows = 0:stepsize:rs-wrs;
+cols = 0:stepsize:cs-wcs;
 nr = length(rows);
 nc = length(cols);
 
